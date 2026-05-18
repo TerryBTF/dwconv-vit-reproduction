@@ -30,7 +30,7 @@ We plan to cover four criteria:
 | Hyperparams check | Is the DWConv improvement sensitive to training budget or kernel size? | 50 vs 100 epochs, or DWConv kernel size 3 vs 5 vs 7 |
 | New algorithm variant | Does a slightly different DWConv variant preserve or improve the reported effect? | Evaluate a small variant such as changing DWConv placement, kernel composition, or shortcut frequency |
 
-## Reproduced 
+## Criterion 1: Reproduced 
 
 Ruifang(Terry) Zhang is responsible for the `Reproduced` criterion.
 
@@ -64,7 +64,7 @@ Install a PyTorch build that matches your CUDA version if the generic install do
 
 The official loader expects CIFAR data to already exist under the path passed with `--data-path` and uses `download=False`.
 
-## Ruifang(Terry) Zhang Training Commands
+## Training Commands
 
 Run from `official_code/`.
 

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Training outputs
+output/
+outputs/
+checkpoints/
+*.pth
+*.pt
+
+# Data should stay outside git
+data/
+datasets/
+CIFAR-10/
+CIFAR-100/
+cifar-10-batches-py/
+cifar-100-python/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

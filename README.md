@@ -30,11 +30,11 @@ We plan to cover four criteria:
 | Hyperparams check | Is the DWConv improvement sensitive to training budget or kernel size? | 50 vs 100 epochs, or DWConv kernel size 3 vs 5 vs 7 |
 | New algorithm variant | Does a slightly different DWConv variant preserve or improve the reported effect? | Evaluate a small variant such as changing DWConv placement, kernel composition, or shortcut frequency |
 
-## Ruifang(Terry) Zhang Scope
+## Reproduced 
 
 Ruifang(Terry) Zhang is responsible for the `Reproduced` criterion.
 
-Ruifang(Terry) Zhang's target is the main Table 1 subset:
+The target is the main Table 1 subset:
 
 | Dataset | Paper baseline | Paper DWConv | Our baseline | Our DWConv |
 |---|---:|---:|---:|---:|

@@ -1,6 +1,6 @@
-# Member 1 Main Reproduction Log
+# Ruifang(Terry) Zhang Main Reproduction Log
 
-Owner: Member 1
+Owner: Ruifang(Terry) Zhang
 
 Criterion: Reproduced
 
@@ -22,4 +22,3 @@ Does adding depth-wise convolution shortcuts improve ViT-Tiny classification acc
 - The official `models/vit.py` currently includes the DWConv shortcut in the ViT Transformer block.
 - A baseline without DWConv requires a small code/config switch or a separate baseline model variant before running the two baseline rows.
 - Record exact command, GPU model, batch size, seed, best Acc@1, final Acc@1, and wall-clock training time for every run.
-

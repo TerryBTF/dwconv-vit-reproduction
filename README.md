@@ -21,19 +21,20 @@ We do not aim to reproduce the full paper. We exclude ImageNet, COCO, Swin, CaiT
 
 ## Reproduction Criteria
 
-We plan to cover at least three criteria:
+We plan to cover four criteria:
 
 | Criterion | Question | Planned evidence |
 |---|---|---|
 | Reproduced | Does DWConv improve ViT-Tiny on CIFAR-10/CIFAR-100? | Main Table 1 subset: ViT-Tiny baseline vs ViT-Tiny + DWConv |
 | Ablation study | Does DWConv reduce dependence on positional embeddings? | With/without positional embedding, with/without DWConv |
 | Hyperparams check | Is the DWConv improvement sensitive to training budget or kernel size? | 50 vs 100 epochs, or DWConv kernel size 3 vs 5 vs 7 |
+| New algorithm variant | Does a slightly different DWConv variant preserve or improve the reported effect? | Evaluate a small variant such as changing DWConv placement, kernel composition, or shortcut frequency |
 
-## Member 1 Scope
+## Ruifang(Terry) Zhang Scope
 
-Member 1 is responsible for the `Reproduced` criterion.
+Ruifang(Terry) Zhang is responsible for the `Reproduced` criterion.
 
-The Member 1 target is the main Table 1 subset:
+Ruifang(Terry) Zhang's target is the main Table 1 subset:
 
 | Dataset | Paper baseline | Paper DWConv | Our baseline | Our DWConv |
 |---|---:|---:|---:|---:|
@@ -63,7 +64,7 @@ Install a PyTorch build that matches your CUDA version if the generic install do
 
 The official loader expects CIFAR data to already exist under the path passed with `--data-path` and uses `download=False`.
 
-## Member 1 Training Commands
+## Ruifang(Terry) Zhang Training Commands
 
 Run from `official_code/`.
 
@@ -117,4 +118,3 @@ For every run, record:
 - final Acc@1
 - training time
 - commit hash
-

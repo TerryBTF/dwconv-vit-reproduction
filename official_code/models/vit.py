@@ -73,10 +73,11 @@ class Attention(nn.Module):
 
 
 class Transformer(nn.Module):
-    def __init__(self, dim, depth, heads, dim_head, mlp_dim, Height, Width, dropout=0.):
+    def __init__(self, dim, depth, heads, dim_head, mlp_dim, Height, Width, dropout=0., use_dwconv=True):
         super().__init__()
         self.layers = nn.ModuleList([])
 
+        self.use_dwconv = use_dwconv
         self.gelu = nn.GELU()
         self.convs = nn.ModuleList([])
         self.batchnorms = nn.ModuleList([])
@@ -89,28 +90,30 @@ class Transformer(nn.Module):
                 PreNorm(dim, FeedForward(dim, mlp_dim, dropout=dropout))
             ]))
 
-            self.convs.append(nn.Conv2d(in_channels=dim, out_channels=dim, kernel_size=3, stride=1, padding=1, groups=dim))
-            self.batchnorms.append(nn.BatchNorm2d(dim))
+            if self.use_dwconv:
+                self.convs.append(nn.Conv2d(in_channels=dim, out_channels=dim, kernel_size=3, stride=1, padding=1, groups=dim))
+                self.batchnorms.append(nn.BatchNorm2d(dim))
 
     def forward(self, x):
         for i, [attn, ff] in enumerate(self.layers):
-            shortcut = x[:, 1:]
-            shortcut = rearrange(shortcut, 'b (h w) d -> b d h w', h=self.height, w=self.width)
-            shortcut = self.gelu(shortcut)
-            shortcut = self.batchnorms[i](shortcut)
-            shortcut = self.convs[i](shortcut)
-            shortcut = rearrange(shortcut, 'b d h w -> b (h w) d')
-            cls_tokens = torch.zeros(shortcut.shape[0], 1, shortcut.shape[2], device=shortcut.device)
-            shortcut = torch.cat((cls_tokens, shortcut), dim=1)
             x = attn(x) + x
             x = ff(x) + x
-            x = shortcut + x
+            if self.use_dwconv:
+                shortcut = x[:, 1:]
+                shortcut = rearrange(shortcut, 'b (h w) d -> b d h w', h=self.height, w=self.width)
+                shortcut = self.gelu(shortcut)
+                shortcut = self.batchnorms[i](shortcut)
+                shortcut = self.convs[i](shortcut)
+                shortcut = rearrange(shortcut, 'b d h w -> b (h w) d')
+                cls_tokens = torch.zeros(shortcut.shape[0], 1, shortcut.shape[2], device=shortcut.device)
+                shortcut = torch.cat((cls_tokens, shortcut), dim=1)
+                x = shortcut + x
 
         return x
 
 
 class ViT(nn.Module):
-    def __init__(self, *, image_size, patch_size, num_classes, dim, depth, heads, mlp_dim, pool='cls', channels=3, dim_head=64, dropout=0., emb_dropout=0.):
+    def __init__(self, *, image_size, patch_size, num_classes, dim, depth, heads, mlp_dim, pool='cls', channels=3, dim_head=64, dropout=0., emb_dropout=0., use_dwconv=True):
         super().__init__()
         image_height, image_width = pair(image_size)
         patch_height, patch_width = pair(patch_size)
@@ -132,7 +135,7 @@ class ViT(nn.Module):
         self.cls_token = nn.Parameter(torch.randn(1, 1, dim))
         self.dropout = nn.Dropout(emb_dropout)
 
-        self.transformer = Transformer(dim, depth, heads, dim_head, mlp_dim, Height, Width, dropout)
+        self.transformer = Transformer(dim, depth, heads, dim_head, mlp_dim, Height, Width, dropout, use_dwconv=use_dwconv)
 
         self.pool = pool
         self.to_latent = nn.Identity()

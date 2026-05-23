@@ -1,0 +1,15 @@
+DATA:
+  DATASET: cifar10
+  IMG_SIZE: 224
+MODEL:
+  TYPE: vit
+  NAME: ViT_Tiny_16_224_cifar10_baseline_100ep
+  NUM_CLASSES: 10
+  ViT:
+    USE_DWCONV: false
+TRAIN:
+  EPOCHS: 100
+  WARMUP_EPOCHS: 10
+  BASE_LR: 5e-4
+  WARMUP_LR: 5e-7
+  MIN_LR: 5e-6

@@ -8,7 +8,7 @@
 import os
 import torch
 import torch.distributed as dist
-from torch._six import inf
+from math import inf
 
 
 def load_checkpoint(config, model, optimizer, lr_scheduler, loss_scaler, logger):

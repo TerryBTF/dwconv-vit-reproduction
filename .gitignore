@@ -13,7 +13,7 @@ checkpoints/
 *.pt
 
 # Data should stay outside git
-data/
+/data/
 datasets/
 CIFAR-10/
 CIFAR-100/
@@ -25,4 +25,3 @@ cifar-100-python/
 Thumbs.db
 .vscode/
 .idea/
-

@@ -55,7 +55,8 @@ def build_model(config):
                     mlp_dim=config.MODEL.ViT.MLP_DIM,
                     dim_head=config.MODEL.ViT.DIM_HEAD,
                     dropout=config.MODEL.DROP_RATE,
-                    emb_dropout=config.MODEL.DROP_RATE)
+                    emb_dropout=config.MODEL.DROP_RATE,
+                    use_dwconv=config.MODEL.ViT.USE_DWCONV)
     elif model_type == 'vit_s':
         model = ViT(image_size=config.DATA.IMG_SIZE,
                     patch_size=config.MODEL.ViT_S.PATCH_SIZE,
@@ -66,7 +67,8 @@ def build_model(config):
                     mlp_dim=config.MODEL.ViT_S.MLP_DIM,
                     dim_head=config.MODEL.ViT_S.DIM_HEAD,
                     dropout=config.MODEL.DROP_RATE,
-                    emb_dropout=config.MODEL.DROP_RATE)
+                    emb_dropout=config.MODEL.DROP_RATE,
+                    use_dwconv=config.MODEL.ViT_S.USE_DWCONV)
     elif model_type == 'cait_xxs':
         model = CaiT(image_size=config.DATA.IMG_SIZE,
                      patch_size=config.MODEL.CaiT_XXS.PATCH_SIZE,

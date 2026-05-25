@@ -17,8 +17,6 @@ This project is an existing-code reproduction for the Fundamental Research in Ma
 
 We focus on the main small-dataset classification claim from Table 1: adding depth-wise convolution shortcuts should improve ViT-Tiny accuracy on CIFAR-10 and CIFAR-100.
 
-We do not aim to reproduce the full paper. We exclude ImageNet, COCO, Swin, CaiT, and Tiny-ImageNet from the initial scope because the course project is expected to fit a reduced single-GPU compute budget.
-
 ## Reproduction Criteria
 
 We plan to cover four criteria:
@@ -27,8 +25,8 @@ We plan to cover four criteria:
 |---|---|---|
 | Reproduced | Does DWConv improve ViT-Tiny on CIFAR-10/CIFAR-100? | Main Table 1 subset: ViT-Tiny baseline vs ViT-Tiny + DWConv |
 | Ablation study | Does DWConv reduce dependence on positional embeddings? | With/without positional embedding, with/without DWConv |
-| Hyperparams check | Is the DWConv improvement sensitive to training budget or kernel size? | 50 vs 100 epochs, or DWConv kernel size 3 vs 5 vs 7 |
-| New algorithm variant | Does a slightly different DWConv variant preserve or improve the reported effect? | Evaluate a small variant such as changing DWConv placement, kernel composition, or shortcut frequency |
+| Hyperparams check |  |  |
+| New algorithm variant |  |  |
 
 ## Criterion 1: Reproduced 
 
@@ -38,8 +36,8 @@ The target is the main Table 1 subset:
 
 | Dataset | Paper baseline | Paper DWConv | Our baseline | Our DWConv |
 |---|---:|---:|---:|---:|
-| CIFAR-10 | 94.01 | 96.41 | TBD | TBD |
-| CIFAR-100 | 73.68 | 78.05 | TBD | TBD |
+| CIFAR-10 | 94.01 | 96.41 | 90.95 | 94.72 |
+| CIFAR-100 | 73.68 | 78.05 | 67.16 | 74.73 |
 
 The official paper used 300 epochs and 4 NVIDIA P100 GPUs. Our initial configs use 100 epochs to support a reduced single-GPU reproduction. We will report the compute difference clearly and evaluate whether the qualitative trend holds rather than claiming exact numerical reproduction.
 
@@ -90,18 +88,57 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port 12346 main.p
   --tag member1-cifar100-dw
 ```
 
-On newer PyTorch versions, `torchrun` may be preferred, but the official code currently requires a `--local_rank` argument. If switching to `torchrun`, update `main.py` argument parsing first.
+On newer PyTorch versions, `torchrun` may be preferred. The local reproduction code accepts both `--local_rank` and `--local-rank` for compatibility.
 
-## Current Implementation Note
+## Current Results
 
-The official `official_code/models/vit.py` currently implements the DWConv shortcut directly inside the ViT Transformer block. The baseline without DWConv is therefore not yet configurable from YAML.
+Completed reduced-budget runs:
 
-Before running the baseline rows, we need to add either:
+| Run ID | Dataset | Model | Epochs | Batch size | Best Acc@1 | Final Acc@1 | Training time |
+|---|---|---|---:|---:|---:|---:|---:|
+| M1-C10-DW | CIFAR-10 | ViT-Tiny + DWConv | 100 | 128 | 94.72 | 94.67 | 2:33:12 |
+| M1-C100-DW | CIFAR-100 | ViT-Tiny + DWConv | 100 | 128 | 74.73 | 74.73 | 2:37:07 |
+| M1-C10-BASE | CIFAR-10 | ViT-Tiny baseline | 100 | 128 | 90.95 | 90.85 | 2:18:28 |
+| M1-C100-BASE | CIFAR-100 | ViT-Tiny baseline | 100 | 128 | 67.16 | 67.11 | 2:17:57 |
 
-- a config flag such as `MODEL.ViT.USE_DWCONV`, or
-- a separate baseline ViT model variant.
+Run details:
 
-This should be done as a small, documented reproduction change so that baseline and DWConv runs share the same training pipeline.
+- Config: `reproduction_configs/vit_tiny_16_224_cifar10_100ep.yaml`
+- Tag: `member1-cifar10-dw`
+- Output log: `outputs/ViT_Tiny_16_224_cifar10_100ep/member1-cifar10-dw/log_rank0.txt`
+- Checkpoint: `outputs/ViT_Tiny_16_224_cifar10_100ep/member1-cifar10-dw/ckpt_epoch_99.pth`
+- Commit: `29ae20c`
+
+CIFAR-100 DWConv:
+
+- Config: `reproduction_configs/vit_tiny_16_224_cifar100_100ep.yaml`
+- Tag: `member1-cifar100-dw`
+- Output log: `outputs/ViT_Tiny_16_224_cifar100_100ep/member1-cifar100-dw/log_rank0.txt`
+- Final Acc@5: 91.40
+- GFLOPs: 1.263017664G
+- Commit: `29ae20c`
+
+CIFAR-10 baseline:
+
+- Config: `reproduction_configs/vit_tiny_16_224_cifar10_baseline_100ep.yaml`
+- Tag: `member1-cifar10-baseline`
+- Output log: `outputs/ViT_Tiny_16_224_cifar10_baseline_100ep/member1-cifar10-baseline/log_rank0.txt`
+- Final Acc@5: 99.27
+- GFLOPs: 1.25803296G
+- Commit: `29ae20c`
+
+CIFAR-100 baseline:
+
+- Config: `reproduction_configs/vit_tiny_16_224_cifar100_baseline_100ep.yaml`
+- Tag: `member1-cifar100-baseline`
+- Output log: `outputs/ViT_Tiny_16_224_cifar100_baseline_100ep/member1-cifar100-baseline/log_rank0.txt`
+- Final Acc@5: 87.38
+- GFLOPs: 1.25805024G
+- Commit: `29ae20c`
+
+## Implementation Note
+
+The local reproduction code adds `MODEL.ViT.USE_DWCONV` and `MODEL.ViT_S.USE_DWCONV` so baseline and DWConv variants can share the same training pipeline. Baseline configs are available in `reproduction_configs/` with `baseline_100ep` in the file name.
 
 ## Reporting Checklist
 

@@ -90,6 +90,46 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port 12346 main.p
 
 On newer PyTorch versions, `torchrun` may be preferred. The local reproduction code accepts both `--local_rank` and `--local-rank` for compatibility.
 
+## Ablation Study
+
+The ablation study follows the ViT-Tiny portion of Table 1 in the paper. It evaluates whether DWConv reduces the model's dependence on learned positional embeddings by crossing two binary choices:
+
+| Dataset | Positional embedding | DWConv | Config |
+|---|---|---|---|
+| CIFAR-10 | yes | no | `reproduction_configs/vit_tiny_16_224_cifar10_baseline_100ep.yaml` |
+| CIFAR-10 | yes | yes | `reproduction_configs/vit_tiny_16_224_cifar10_100ep.yaml` |
+| CIFAR-10 | no | no | `reproduction_configs/vit_tiny_16_224_cifar10_baseline_nope_100ep.yaml` |
+| CIFAR-10 | no | yes | `reproduction_configs/vit_tiny_16_224_cifar10_nope_100ep.yaml` |
+| CIFAR-100 | yes | no | `reproduction_configs/vit_tiny_16_224_cifar100_baseline_100ep.yaml` |
+| CIFAR-100 | yes | yes | `reproduction_configs/vit_tiny_16_224_cifar100_100ep.yaml` |
+| CIFAR-100 | no | no | `reproduction_configs/vit_tiny_16_224_cifar100_baseline_nope_100ep.yaml` |
+| CIFAR-100 | no | yes | `reproduction_configs/vit_tiny_16_224_cifar100_nope_100ep.yaml` |
+
+Run all ablation experiments from the repository root:
+
+```bash
+cd /home/martin/dwconv-vit-reproduction # cd to your repo
+conda activate swin # activate your python env where torch, cuda and gpu are configured
+./ablation_study.sh
+```
+
+The script path is [`ablation_study.sh`](ablation_study.sh). By default it uses:
+
+```text
+DATA_PATH=/home/martin/dwconv-vit-reproduction/data/cifar
+BATCH_SIZE=32
+OUTPUT_DIR=/home/martin/dwconv-vit-reproduction/outputs
+MASTER_PORT_BASE=12360
+```
+
+These can be overridden without editing the script:
+
+```bash
+DATA_PATH=/path/to/cifar BATCH_SIZE=16 MASTER_PORT_BASE=12400 ./ablation_study.sh
+```
+
+Outputs are written under `outputs/<config-name>/<tag>/`, where tags begin with `ablation-`.
+
 ## Current Results
 
 Completed reduced-budget runs:
@@ -139,6 +179,8 @@ CIFAR-100 baseline:
 ## Implementation Note
 
 The local reproduction code adds `MODEL.ViT.USE_DWCONV` and `MODEL.ViT_S.USE_DWCONV` so baseline and DWConv variants can share the same training pipeline. Baseline configs are available in `reproduction_configs/` with `baseline_100ep` in the file name.
+
+For the ablation study, the local code also adds `MODEL.ViT.USE_PE` and `MODEL.ViT_S.USE_PE`. This keeps learned positional embeddings enabled by default for the original configs and disables them only in configs with `nope` in the file name.
 
 ## Reporting Checklist
 

@@ -6,6 +6,7 @@
 # --------------------------------------------------------
 
 import bisect
+import inspect
 
 import torch
 from timm.scheduler.cosine_lr import CosineLRScheduler
@@ -21,10 +22,11 @@ def build_scheduler(config, optimizer, n_iter_per_epoch):
 
     lr_scheduler = None
     if config.TRAIN.LR_SCHEDULER.NAME == 'cosine':
+        cycle_arg = 'cycle_mul' if 'cycle_mul' in inspect.signature(CosineLRScheduler.__init__).parameters else 't_mul'
         lr_scheduler = CosineLRScheduler(
             optimizer,
             t_initial=(num_steps - warmup_steps) if config.TRAIN.LR_SCHEDULER.WARMUP_PREFIX else num_steps,
-            cycle_mul=1.,
+            **{cycle_arg: 1.},
             lr_min=config.TRAIN.MIN_LR,
             warmup_lr_init=config.TRAIN.WARMUP_LR,
             warmup_t=warmup_steps,

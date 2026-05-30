@@ -90,6 +90,7 @@ _C.MODEL.ViT.NUM_HEADS = 3
 _C.MODEL.ViT.MLP_DIM = 768
 _C.MODEL.ViT.DIM_HEAD = 192 // 3
 _C.MODEL.ViT.USE_DWCONV = True
+_C.MODEL.ViT.USE_PE = True
 
 # ViT-S parameters
 _C.MODEL.ViT_S = CN()
@@ -100,6 +101,7 @@ _C.MODEL.ViT_S.NUM_HEADS = 6
 _C.MODEL.ViT_S.MLP_DIM = 1536
 _C.MODEL.ViT_S.DIM_HEAD = 384 // 6
 _C.MODEL.ViT_S.USE_DWCONV = True
+_C.MODEL.ViT_S.USE_PE = True
 
 
 # CaiT XXS parameters

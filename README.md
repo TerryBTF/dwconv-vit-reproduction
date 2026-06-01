@@ -130,6 +130,26 @@ DATA_PATH=/path/to/cifar BATCH_SIZE=16 MASTER_PORT_BASE=12400 ./ablation_study.s
 
 Outputs are written under `outputs/<config-name>/<tag>/`, where tags begin with `ablation-`.
 
+Completed ablation runs use 100 epochs, batch size 32, seed 0, CIFAR official test split evaluation, and a single RTX 3050 Laptop GPU.
+
+| Run ID | Dataset | PE | DWConv | Best Acc@1 | Final Acc@1 | GFLOPs | Training time | Log |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| ABL-C10-BASE-PE | CIFAR-10 | yes | no | 92.44 | 92.4 | 1.2580 | 4:50:52 | `outputs/ViT_Tiny_16_224_cifar10_baseline_100ep/ablation-cifar10-baseline-pe/log_rank0.txt` |
+| ABL-C10-DW-PE | CIFAR-10 | yes | yes | 96.31 | 96.1 | 1.2630 | 5:36:44 | `outputs/ViT_Tiny_16_224_cifar10_100ep/ablation-cifar10-dwconv-pe/log_rank0.txt` |
+| ABL-C10-BASE-NOPE | CIFAR-10 | no | no | 84.54 | 84.4 | 1.2580 | 4:50:19 | `outputs/ViT_Tiny_16_224_cifar10_baseline_nope_100ep/ablation-cifar10-baseline-nope/log_rank0.txt` |
+| ABL-C10-DW-NOPE | CIFAR-10 | no | yes | 96.11 | 96.0 | 1.2630 | 5:32:53 | `outputs/ViT_Tiny_16_224_cifar10_nope_100ep/ablation-cifar10-dwconv-nope/log_rank0.txt` |
+| ABL-C100-BASE-PE | CIFAR-100 | yes | no | 68.46 | 68.4 | 1.2581 | 4:54:14 | `outputs/ViT_Tiny_16_224_cifar100_baseline_100ep/ablation-cifar100-baseline-pe/log_rank0.txt` |
+| ABL-C100-DW-PE | CIFAR-100 | yes | yes | 77.71 | 77.7 | 1.2630 | 5:38:15 | `outputs/ViT_Tiny_16_224_cifar100_100ep/ablation-cifar100-dwconv-pe/log_rank0.txt` |
+| ABL-C100-BASE-NOPE | CIFAR-100 | no | no | 60.12 | 60.1 | 1.2581 | 4:49:57 | `outputs/ViT_Tiny_16_224_cifar100_baseline_nope_100ep/ablation-cifar100-baseline-nope/log_rank0.txt` |
+| ABL-C100-DW-NOPE | CIFAR-100 | no | yes | 79.42 | 79.3 | 1.2630 | 5:31:57 | `outputs/ViT_Tiny_16_224_cifar100_nope_100ep/ablation-cifar100-dwconv-nope/log_rank0.txt` |
+
+Summary:
+
+- With positional embeddings enabled, DWConv improves best Acc@1 by +3.87 points on CIFAR-10 and +9.25 points on CIFAR-100.
+- Removing positional embeddings hurts vanilla ViT-Tiny strongly: -7.90 points on CIFAR-10 and -8.34 points on CIFAR-100.
+- DWConv largely removes this dependence on learned positional embeddings. Without PE, DWConv improves over the no-PE baseline by +11.57 points on CIFAR-10 and +19.30 points on CIFAR-100.
+- The DWConv overhead is small in this setup: about +0.005 GFLOPs over the baseline ViT-Tiny runs.
+
 ## Current Results
 
 Completed reduced-budget runs:

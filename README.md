@@ -48,7 +48,16 @@ official_code/                    Official implementation from the authors
 reproduction_configs/             Course-specific reduced-compute configs
 experiments/                      Experiment plans and result logs
 requirements.txt                  Python package requirements
+controlled_dataset/               Individual controlled-dataset assignment assets
 ```
+
+## Controlled Dataset
+
+The repository also contains Ruifang(Terry) Zhang's individual Controlled Local Patterns dataset. It tests whether a classifier can recognize a local spatial arrangement at absolute image locations absent from training.
+
+- Documentation: [`controlled_dataset/README.md`](controlled_dataset/README.md)
+- Generator: [`controlled_dataset/generate_dataset.py`](controlled_dataset/generate_dataset.py)
+- Generated data and examples: [`controlled_dataset/generated/`](controlled_dataset/generated/)
 
 ## Setup
 

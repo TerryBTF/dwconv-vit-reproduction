@@ -1,0 +1,4 @@
+split,samples,samples_per_class
+train,2000,500
+test_iid,400,100
+test_ood_location,400,100

@@ -51,3 +51,55 @@ train_labels = data["train_labels"]
 
 Images use `uint8` RGB format with shape `[N, 32, 32, 3]`.
 
+## Sanity-Check Baselines
+
+The evaluation script trains an MLP and a small CNN, and includes a 25%
+random-classification baseline:
+
+```bash
+python controlled_dataset/evaluate_baselines.py
+```
+
+Default settings:
+
+- 20 epochs
+- batch size 64
+- Adam with learning rate `1e-3`
+- seeds 0, 1, and 2
+- automatic CUDA/CPU selection
+
+To run explicitly on CPU:
+
+```bash
+python controlled_dataset/evaluate_baselines.py --device cpu
+```
+
+Results are written to:
+
+- `controlled_dataset/results/baseline_runs.csv`
+- `controlled_dataset/results/baseline_summary.json`
+
+The reported location-generalization gap is:
+
+```text
+IID accuracy - OOD-location accuracy
+```
+
+A useful model should have high IID accuracy before its OOD gap is interpreted.
+
+### Observed Results
+
+Mean accuracy plus or minus sample standard deviation over seeds 0, 1, and 2:
+
+| Model | IID accuracy | OOD-location accuracy | Gap |
+|---|---:|---:|---:|
+| Random | 25.00 | 25.00 | 0.00 |
+| MLP | 84.17 +/- 10.32 | 26.50 +/- 1.00 | 57.67 +/- 9.46 |
+| Small CNN | 100.00 +/- 0.00 | 100.00 +/- 0.00 | 0.00 +/- 0.00 |
+
+The MLP learns the task at familiar positions but falls to approximately
+chance accuracy in the held-out image region. The CNN transfers the local
+patterns across positions for every tested seed. This confirms that the
+dataset is learnable and that the OOD split detects position-dependent
+solutions.
+

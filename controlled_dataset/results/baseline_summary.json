@@ -1,0 +1,107 @@
+{
+  "settings": {
+    "data": "local_patterns.npz",
+    "epochs": 20,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "device": "cpu",
+    "torch_version": "2.0.0+cpu"
+  },
+  "summary": [
+    {
+      "model": "random",
+      "metric": "train_accuracy",
+      "mean": 25.0,
+      "std": 0.0
+    },
+    {
+      "model": "random",
+      "metric": "iid_accuracy",
+      "mean": 25.0,
+      "std": 0.0
+    },
+    {
+      "model": "random",
+      "metric": "ood_accuracy",
+      "mean": 25.0,
+      "std": 0.0
+    },
+    {
+      "model": "random",
+      "metric": "generalization_gap",
+      "mean": 0.0,
+      "std": 0.0
+    },
+    {
+      "model": "random",
+      "metric": "training_seconds",
+      "mean": 0.0,
+      "std": 0.0
+    },
+    {
+      "model": "mlp",
+      "metric": "train_accuracy",
+      "mean": 94.76666666666667,
+      "std": 4.6543886100467935
+    },
+    {
+      "model": "mlp",
+      "metric": "iid_accuracy",
+      "mean": 84.16666666666667,
+      "std": 10.320893049214943
+    },
+    {
+      "model": "mlp",
+      "metric": "ood_accuracy",
+      "mean": 26.5,
+      "std": 1.0
+    },
+    {
+      "model": "mlp",
+      "metric": "generalization_gap",
+      "mean": 57.666666666666664,
+      "std": 9.46154497602444
+    },
+    {
+      "model": "mlp",
+      "metric": "training_seconds",
+      "mean": 4.051917433333332,
+      "std": 0.08135933796192812
+    },
+    {
+      "model": "small_cnn",
+      "metric": "train_accuracy",
+      "mean": 100.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "iid_accuracy",
+      "mean": 100.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "ood_accuracy",
+      "mean": 100.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "generalization_gap",
+      "mean": 0.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "training_seconds",
+      "mean": 23.040871700000007,
+      "std": 0.7281942617813845
+    }
+  ]
+}

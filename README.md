@@ -53,11 +53,19 @@ controlled_dataset/               Individual controlled-dataset assignment asset
 
 ## Controlled Dataset
 
-The repository also contains Ruifang(Terry) Zhang's individual Controlled Local Patterns dataset. It tests whether a classifier can recognize a local spatial arrangement at absolute image locations absent from training.
+The repository also contains individual controlled-dataset assignment assets.
+
+Ruifang(Terry) Zhang's Controlled Local Patterns dataset tests whether a classifier can recognize a local spatial arrangement at absolute image locations absent from training.
 
 - Documentation: [`controlled_dataset/README.md`](controlled_dataset/README.md)
 - Generator: [`controlled_dataset/generate_dataset.py`](controlled_dataset/generate_dataset.py)
 - Generated data and examples: [`controlled_dataset/generated/`](controlled_dataset/generated/)
+
+Guotao's Controlled Local Defects dataset tests whether a classifier can recognize tiny local defects when the global object shape is identical for every class.
+
+- Documentation: [`controlled_dataset_guotao/README.md`](controlled_dataset_guotao/README.md)
+- Generator: [`controlled_dataset_guotao/generate_dataset.py`](controlled_dataset_guotao/generate_dataset.py)
+- Generated data and examples: [`controlled_dataset_guotao/generated/`](controlled_dataset_guotao/generated/)
 
 ## Setup
 

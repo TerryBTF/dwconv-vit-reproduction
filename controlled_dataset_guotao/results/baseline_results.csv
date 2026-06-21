@@ -1,0 +1,5 @@
+model,split,accuracy
+constant_class_rule,train,25.0
+constant_class_rule,test,25.0
+global_mean_rule,train,33.0
+global_mean_rule,test,25.0

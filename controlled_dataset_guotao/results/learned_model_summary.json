@@ -1,0 +1,65 @@
+{
+  "settings": {
+    "data": "local_defects.npz",
+    "epochs": 25,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "device": "cpu",
+    "torch_version": "2.8.0"
+  },
+  "summary": [
+    {
+      "model": "mlp",
+      "metric": "train_accuracy",
+      "mean": 36.55555555555555,
+      "std": 13.022772077886971
+    },
+    {
+      "model": "mlp",
+      "metric": "test_accuracy",
+      "mean": 25.0,
+      "std": 0.0
+    },
+    {
+      "model": "mlp",
+      "metric": "generalization_gap",
+      "mean": 11.555555555555555,
+      "std": 13.022772077886971
+    },
+    {
+      "model": "mlp",
+      "metric": "training_seconds",
+      "mean": 2.579027624999998,
+      "std": 0.025050799279907797
+    },
+    {
+      "model": "small_cnn",
+      "metric": "train_accuracy",
+      "mean": 100.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "test_accuracy",
+      "mean": 100.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "generalization_gap",
+      "mean": 0.0,
+      "std": 0.0
+    },
+    {
+      "model": "small_cnn",
+      "metric": "training_seconds",
+      "mean": 45.76859369466666,
+      "std": 0.10265540021917363
+    }
+  ]
+}

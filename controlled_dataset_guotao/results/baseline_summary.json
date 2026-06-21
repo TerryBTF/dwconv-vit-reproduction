@@ -1,0 +1,25 @@
+{
+  "property": "fine-grained local defect recognition with identical global shape",
+  "results": [
+    {
+      "model": "constant_class_rule",
+      "split": "train",
+      "accuracy": 25.0
+    },
+    {
+      "model": "constant_class_rule",
+      "split": "test",
+      "accuracy": 25.0
+    },
+    {
+      "model": "global_mean_rule",
+      "split": "train",
+      "accuracy": 33.0
+    },
+    {
+      "model": "global_mean_rule",
+      "split": "test",
+      "accuracy": 25.0
+    }
+  ]
+}

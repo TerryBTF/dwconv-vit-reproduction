@@ -1,0 +1,3 @@
+split,samples,samples_per_class,label_signal
+train,600,150,tiny local defect orientation
+test,800,200,tiny local defect orientation

@@ -1,89 +1,78 @@
 # DWConv ViT Reproduction
 
-Reproducing ViT-Tiny with depth-wise convolution shortcuts on CIFAR-10 and CIFAR-100.
+This repository contains a reproducibility project for **Depth-Wise Convolutions in Vision Transformers for Efficient Training on Small Datasets**. The project evaluates whether depth-wise convolution (DWConv) shortcuts improve ViT-Tiny on CIFAR-10 and CIFAR-100 under a reduced single-GPU training budget.
 
-## Paper
-
-- Paper: Depth-Wise Convolutions in Vision Transformers for Efficient Training on Small Datasets
-- arXiv: https://arxiv.org/abs/2407.19394
-- Official code: https://github.com/ZTX-100/Efficient_ViT_with_DW
+- Paper: <https://arxiv.org/abs/2407.19394>
+- Official code: <https://github.com/ZTX-100/Efficient_ViT_with_DW>
 - Vendored official commit: `d7ae645bedec54b4850ff659889c0588164aaac2`
+- Report: [`report/fundamental_report.md`](report/fundamental_report.md)
+- PDF report: [`report/fundamental_report.pdf`](report/fundamental_report.pdf)
 
-The original implementation is stored in [`official_code/`](official_code/). We keep our course-specific configs, logs, and documentation outside that directory unless a reproduction change requires editing the implementation.
+## Reproducibility Criteria
 
-## Project Scope
+This is an existing-code reproduction. The project addresses three criteria:
 
-This project is an existing-code reproduction for the Fundamental Research in Machine and Deep Learning final project.
-
-We focus on the main small-dataset classification claim from Table 1: adding depth-wise convolution shortcuts should improve ViT-Tiny accuracy on CIFAR-10 and CIFAR-100.
-
-## Reproduction Criteria
-
-We plan to cover four criteria:
-
-| Criterion | Question | Planned evidence |
+| Criterion | Responsible member | Evidence |
 |---|---|---|
-| Reproduced | Does DWConv improve ViT-Tiny on CIFAR-10/CIFAR-100? | Main Table 1 subset: ViT-Tiny baseline vs ViT-Tiny + DWConv |
-| Ablation study | Does DWConv reduce dependence on positional embeddings? | With/without positional embedding, with/without DWConv |
-| Hyperparams check |  |  |
-| New algorithm variant |  |  |
+| Reproduced | Ruifang Zhang | ViT-Tiny baseline vs ViT-Tiny + DWConv on CIFAR-10 and CIFAR-100 |
+| Ablation study | Guotao Gou | Positional embedding on/off crossed with DWConv on/off |
+| New algorithm variant | Radoslaw Majer | Learned per-layer fusion weights for the DWConv shortcut |
 
-## Criterion 1: Reproduced 
+## Main Results
 
-Ruifang(Terry) Zhang is responsible for the `Reproduced` criterion.
+The original paper trained for 300 epochs on four NVIDIA P100 GPUs. These runs use 100 epochs on a single GPU, so the goal is to reproduce the qualitative trend rather than match the paper's exact accuracies.
 
-The target is the main Table 1 subset:
+| Dataset | Paper baseline | Paper DWConv | Our baseline | Our DWConv | DWConv gain |
+|---|---:|---:|---:|---:|---:|
+| CIFAR-10 | 94.01 | 96.41 | 90.95 | 94.72 | +3.77 |
+| CIFAR-100 | 73.68 | 78.05 | 67.16 | 74.73 | +7.57 |
 
-| Dataset | Paper baseline | Paper DWConv | Our baseline | Our DWConv |
-|---|---:|---:|---:|---:|
-| CIFAR-10 | 94.01 | 96.41 | 90.95 | 94.72 |
-| CIFAR-100 | 73.68 | 78.05 | 67.16 | 74.73 |
+The reproduced results uphold the paper's main conclusion: DWConv improves ViT-Tiny on both datasets, with a larger gain on CIFAR-100.
 
-The official paper used 300 epochs and 4 NVIDIA P100 GPUs. Our initial configs use 100 epochs to support a reduced single-GPU reproduction. We will report the compute difference clearly and evaluate whether the qualitative trend holds rather than claiming exact numerical reproduction.
+## Ablation Summary
+
+The ablation study evaluates whether DWConv reduces dependence on learned positional embeddings (PE).
+
+| Dataset | PE | DWConv | Best Acc@1 | Final Acc@1 | GFLOPs | Time |
+|---|---|---|---:|---:|---:|---:|
+| CIFAR-10 | yes | no | 92.44 | 92.4 | 1.2580 | 4:50:52 |
+| CIFAR-10 | yes | yes | 96.31 | 96.1 | 1.2630 | 5:36:44 |
+| CIFAR-10 | no | no | 84.54 | 84.4 | 1.2580 | 4:50:19 |
+| CIFAR-10 | no | yes | 96.11 | 96.0 | 1.2630 | 5:32:53 |
+| CIFAR-100 | yes | no | 68.46 | 68.4 | 1.2581 | 4:54:14 |
+| CIFAR-100 | yes | yes | 77.71 | 77.7 | 1.2630 | 5:38:15 |
+| CIFAR-100 | no | no | 60.12 | 60.1 | 1.2581 | 4:49:57 |
+| CIFAR-100 | no | yes | 79.42 | 79.3 | 1.2630 | 5:31:57 |
+
+Removing PE strongly hurts the baseline, while the DWConv model remains accurate without PE. This supports the interpretation that DWConv supplies useful local spatial information.
 
 ## Repository Layout
 
 ```text
-official_code/                    Official implementation from the authors
-reproduction_configs/             Course-specific reduced-compute configs
-experiments/                      Experiment plans and result logs
-requirements.txt                  Python package requirements
-controlled_dataset/               Individual controlled-dataset assignment assets
+official_code/             Vendored implementation adapted for the reproduction
+reproduction_configs/      YAML configs for main and ablation runs
+experiments/               Experiment notes and result logs
+report/                    Markdown and PDF report
+controlled_dataset/        Individual controlled-dataset assignment assets
+controlled_dataset_guotao/ Individual controlled-dataset assignment assets
+requirements.txt           Python package requirements
 ```
-
-## Controlled Dataset
-
-The repository also contains individual controlled-dataset assignment assets.
-
-Ruifang(Terry) Zhang's Controlled Local Patterns dataset tests whether a classifier can recognize a local spatial arrangement at absolute image locations absent from training.
-
-- Documentation: [`controlled_dataset/README.md`](controlled_dataset/README.md)
-- Generator: [`controlled_dataset/generate_dataset.py`](controlled_dataset/generate_dataset.py)
-- Generated data and examples: [`controlled_dataset/generated/`](controlled_dataset/generated/)
-
-Guotao's Controlled Local Defects dataset tests whether a classifier can recognize tiny local defects when the global object shape is identical for every class.
-
-- Documentation: [`controlled_dataset_guotao/README.md`](controlled_dataset_guotao/README.md)
-- Generator: [`controlled_dataset_guotao/generate_dataset.py`](controlled_dataset_guotao/generate_dataset.py)
-- Generated data and examples: [`controlled_dataset_guotao/generated/`](controlled_dataset_guotao/generated/)
 
 ## Setup
 
-Create an environment and install dependencies:
+Create a Python environment and install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Install a PyTorch build that matches your CUDA version if the generic install does not select the right wheel.
+Install a PyTorch build matching your CUDA version if the generic wheel is not appropriate. CIFAR data must already exist under the path passed with `--data-path`; the loader uses `download=False`.
 
-The official loader expects CIFAR data to already exist under the path passed with `--data-path` and uses `download=False`.
+## Running Main Experiments
 
-## Training Commands
+Run commands from `official_code/`.
 
-Run from `official_code/`.
-
-CIFAR-10 DWConv run:
+CIFAR-10 DWConv:
 
 ```bash
 python -m torch.distributed.launch --nproc_per_node=1 --master_port 12345 main.py \
@@ -94,7 +83,7 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port 12345 main.p
   --tag member1-cifar10-dw
 ```
 
-CIFAR-100 DWConv run:
+CIFAR-100 DWConv:
 
 ```bash
 python -m torch.distributed.launch --nproc_per_node=1 --master_port 12346 main.py \
@@ -105,132 +94,18 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port 12346 main.p
   --tag member1-cifar100-dw
 ```
 
-On newer PyTorch versions, `torchrun` may be preferred. The local reproduction code accepts both `--local_rank` and `--local-rank` for compatibility.
+Baseline runs use the corresponding `baseline_100ep.yaml` configs in `reproduction_configs/`.
 
-## Ablation Study
+## Running Ablations
 
-The ablation study follows the ViT-Tiny portion of Table 1 in the paper. It evaluates whether DWConv reduces the model's dependence on learned positional embeddings by crossing two binary choices:
-
-| Dataset | Positional embedding | DWConv | Config |
-|---|---|---|---|
-| CIFAR-10 | yes | no | `reproduction_configs/vit_tiny_16_224_cifar10_baseline_100ep.yaml` |
-| CIFAR-10 | yes | yes | `reproduction_configs/vit_tiny_16_224_cifar10_100ep.yaml` |
-| CIFAR-10 | no | no | `reproduction_configs/vit_tiny_16_224_cifar10_baseline_nope_100ep.yaml` |
-| CIFAR-10 | no | yes | `reproduction_configs/vit_tiny_16_224_cifar10_nope_100ep.yaml` |
-| CIFAR-100 | yes | no | `reproduction_configs/vit_tiny_16_224_cifar100_baseline_100ep.yaml` |
-| CIFAR-100 | yes | yes | `reproduction_configs/vit_tiny_16_224_cifar100_100ep.yaml` |
-| CIFAR-100 | no | no | `reproduction_configs/vit_tiny_16_224_cifar100_baseline_nope_100ep.yaml` |
-| CIFAR-100 | no | yes | `reproduction_configs/vit_tiny_16_224_cifar100_nope_100ep.yaml` |
-
-Run all ablation experiments from the repository root:
+The ablation configs cross `MODEL.ViT.USE_DWCONV` with `MODEL.ViT.USE_PE`. Run the provided script from the repository root:
 
 ```bash
-cd /home/martin/dwconv-vit-reproduction # cd to your repo
-conda activate swin # activate your python env where torch, cuda and gpu are configured
-./ablation_study.sh
+DATA_PATH=/path/to/cifar BATCH_SIZE=32 ./ablation_study.sh
 ```
 
-The script path is [`ablation_study.sh`](ablation_study.sh). By default it uses:
+Outputs are written under `outputs/<config-name>/<tag>/`.
 
-```text
-DATA_PATH=/home/martin/dwconv-vit-reproduction/data/cifar
-BATCH_SIZE=32
-OUTPUT_DIR=/home/martin/dwconv-vit-reproduction/outputs
-MASTER_PORT_BASE=12360
-```
+## Implementation Notes
 
-These can be overridden without editing the script:
-
-```bash
-DATA_PATH=/path/to/cifar BATCH_SIZE=16 MASTER_PORT_BASE=12400 ./ablation_study.sh
-```
-
-Outputs are written under `outputs/<config-name>/<tag>/`, where tags begin with `ablation-`.
-
-Completed ablation runs use 100 epochs, batch size 32, seed 0, CIFAR official test split evaluation, and a single RTX 3050 Laptop GPU.
-
-| Run ID | Dataset | PE | DWConv | Best Acc@1 | Final Acc@1 | GFLOPs | Training time | Log |
-|---|---|---:|---:|---:|---:|---:|---:|---|
-| ABL-C10-BASE-PE | CIFAR-10 | yes | no | 92.44 | 92.4 | 1.2580 | 4:50:52 | `outputs/ViT_Tiny_16_224_cifar10_baseline_100ep/ablation-cifar10-baseline-pe/log_rank0.txt` |
-| ABL-C10-DW-PE | CIFAR-10 | yes | yes | 96.31 | 96.1 | 1.2630 | 5:36:44 | `outputs/ViT_Tiny_16_224_cifar10_100ep/ablation-cifar10-dwconv-pe/log_rank0.txt` |
-| ABL-C10-BASE-NOPE | CIFAR-10 | no | no | 84.54 | 84.4 | 1.2580 | 4:50:19 | `outputs/ViT_Tiny_16_224_cifar10_baseline_nope_100ep/ablation-cifar10-baseline-nope/log_rank0.txt` |
-| ABL-C10-DW-NOPE | CIFAR-10 | no | yes | 96.11 | 96.0 | 1.2630 | 5:32:53 | `outputs/ViT_Tiny_16_224_cifar10_nope_100ep/ablation-cifar10-dwconv-nope/log_rank0.txt` |
-| ABL-C100-BASE-PE | CIFAR-100 | yes | no | 68.46 | 68.4 | 1.2581 | 4:54:14 | `outputs/ViT_Tiny_16_224_cifar100_baseline_100ep/ablation-cifar100-baseline-pe/log_rank0.txt` |
-| ABL-C100-DW-PE | CIFAR-100 | yes | yes | 77.71 | 77.7 | 1.2630 | 5:38:15 | `outputs/ViT_Tiny_16_224_cifar100_100ep/ablation-cifar100-dwconv-pe/log_rank0.txt` |
-| ABL-C100-BASE-NOPE | CIFAR-100 | no | no | 60.12 | 60.1 | 1.2581 | 4:49:57 | `outputs/ViT_Tiny_16_224_cifar100_baseline_nope_100ep/ablation-cifar100-baseline-nope/log_rank0.txt` |
-| ABL-C100-DW-NOPE | CIFAR-100 | no | yes | 79.42 | 79.3 | 1.2630 | 5:31:57 | `outputs/ViT_Tiny_16_224_cifar100_nope_100ep/ablation-cifar100-dwconv-nope/log_rank0.txt` |
-
-Summary:
-
-- With positional embeddings enabled, DWConv improves best Acc@1 by +3.87 points on CIFAR-10 and +9.25 points on CIFAR-100.
-- Removing positional embeddings hurts vanilla ViT-Tiny strongly: -7.90 points on CIFAR-10 and -8.34 points on CIFAR-100.
-- DWConv largely removes this dependence on learned positional embeddings. Without PE, DWConv improves over the no-PE baseline by +11.57 points on CIFAR-10 and +19.30 points on CIFAR-100.
-- The DWConv overhead is small in this setup: about +0.005 GFLOPs over the baseline ViT-Tiny runs.
-
-## Current Results
-
-Completed reduced-budget runs:
-
-| Run ID | Dataset | Model | Epochs | Batch size | Best Acc@1 | Final Acc@1 | Training time |
-|---|---|---|---:|---:|---:|---:|---:|
-| M1-C10-DW | CIFAR-10 | ViT-Tiny + DWConv | 100 | 128 | 94.72 | 94.67 | 2:33:12 |
-| M1-C100-DW | CIFAR-100 | ViT-Tiny + DWConv | 100 | 128 | 74.73 | 74.73 | 2:37:07 |
-| M1-C10-BASE | CIFAR-10 | ViT-Tiny baseline | 100 | 128 | 90.95 | 90.85 | 2:18:28 |
-| M1-C100-BASE | CIFAR-100 | ViT-Tiny baseline | 100 | 128 | 67.16 | 67.11 | 2:17:57 |
-
-Run details:
-
-- Config: `reproduction_configs/vit_tiny_16_224_cifar10_100ep.yaml`
-- Tag: `member1-cifar10-dw`
-- Output log: `outputs/ViT_Tiny_16_224_cifar10_100ep/member1-cifar10-dw/log_rank0.txt`
-- Checkpoint: `outputs/ViT_Tiny_16_224_cifar10_100ep/member1-cifar10-dw/ckpt_epoch_99.pth`
-- Commit: `29ae20c`
-
-CIFAR-100 DWConv:
-
-- Config: `reproduction_configs/vit_tiny_16_224_cifar100_100ep.yaml`
-- Tag: `member1-cifar100-dw`
-- Output log: `outputs/ViT_Tiny_16_224_cifar100_100ep/member1-cifar100-dw/log_rank0.txt`
-- Final Acc@5: 91.40
-- GFLOPs: 1.263017664G
-- Commit: `29ae20c`
-
-CIFAR-10 baseline:
-
-- Config: `reproduction_configs/vit_tiny_16_224_cifar10_baseline_100ep.yaml`
-- Tag: `member1-cifar10-baseline`
-- Output log: `outputs/ViT_Tiny_16_224_cifar10_baseline_100ep/member1-cifar10-baseline/log_rank0.txt`
-- Final Acc@5: 99.27
-- GFLOPs: 1.25803296G
-- Commit: `29ae20c`
-
-CIFAR-100 baseline:
-
-- Config: `reproduction_configs/vit_tiny_16_224_cifar100_baseline_100ep.yaml`
-- Tag: `member1-cifar100-baseline`
-- Output log: `outputs/ViT_Tiny_16_224_cifar100_baseline_100ep/member1-cifar100-baseline/log_rank0.txt`
-- Final Acc@5: 87.38
-- GFLOPs: 1.25805024G
-- Commit: `29ae20c`
-
-## Implementation Note
-
-The local reproduction code adds `MODEL.ViT.USE_DWCONV` and `MODEL.ViT_S.USE_DWCONV` so baseline and DWConv variants can share the same training pipeline. Baseline configs are available in `reproduction_configs/` with `baseline_100ep` in the file name.
-
-For the ablation study, the local code also adds `MODEL.ViT.USE_PE` and `MODEL.ViT_S.USE_PE`. This keeps learned positional embeddings enabled by default for the original configs and disables them only in configs with `nope` in the file name.
-
-## Reporting Checklist
-
-For every run, record:
-
-- dataset
-- config file
-- exact command
-- GPU model
-- epochs
-- batch size
-- seed
-- best Acc@1
-- final Acc@1
-- training time
-- commit hash
+The vendored ViT implementation was adapted to expose `MODEL.ViT.USE_DWCONV` and `MODEL.ViT.USE_PE`, enabling controlled baseline, DWConv, and no-positional-embedding runs from YAML configs. Compatibility fixes for newer PyTorch and timm versions are documented in [`experiments/reproduction_changes.md`](experiments/reproduction_changes.md).

@@ -1,8 +1,8 @@
 # Reproduction - Depth-Wise Convolutions in Vision Transformers for Efficient Training on Small Datasets
 
-Ruifang Zhang | 6380751  
-Guotao Gou | 6380743  
-Radoslaw Majer | 5699975
+Ruifang Zhang | 6380751 | Reproduced  
+Guotao Gou | 6380743 | Ablation study  
+Radoslaw Majer | 5699975 | New algorithm variant
 
 ## Introduction
 
@@ -13,6 +13,8 @@ The paper *Depth-Wise Convolutions in Vision Transformers for Efficient Training
 In this project, we reproduce and extend the paper's main small-dataset classification claim. We first compare vanilla ViT-Tiny with ViT-Tiny + DWConv on CIFAR-10 and CIFAR-100 under a reduced single-GPU training budget. Because the original paper used 300 epochs and four P100 GPUs, our goal is not exact numerical reproduction. Instead, we test whether the qualitative effect remains: DWConv should improve ViT-Tiny accuracy relative to the baseline.
 
 We then perform two additional studies. First, we run a positional-embedding ablation to test whether DWConv reduces the model's dependence on learned positional information. Second, we evaluate a small architectural variant in which the DWConv shortcut is multiplied by a learned per-layer fusion weight. Together, these experiments evaluate both the reproducibility of the reported accuracy gains and the proposed explanation that DWConv provides useful local spatial bias for training ViTs on small datasets.
+
+This project uses the existing-code reproduction route. We did not reimplement the full method from scratch; instead, we evaluated and extended the available implementation. We therefore address three reproducibility criteria in the same order as the report: reproduced, ablation study, and new algorithm variant. These criteria were chosen because they test both the reported empirical effect and the proposed explanation that DWConv provides useful local spatial inductive bias.
 
 ## Results Reproduction
 
@@ -162,4 +164,4 @@ Came up with an additional parameter for the fusion weight and compared the resu
 
 ## AI Disclosure
 
-This study was entirely conducted by humans, as stated in the header of this post. In particular, no AI models were used to direct the research or interpret the results. Generative AI/LLM tools were used during the study for the purposes of text phrasing and automated code generation and debugging.
+The experiments, analysis decisions, and final conclusions were conducted and verified by the authors. Generative AI/LLM tools were used to assist with text phrasing, code debugging, and automation.
